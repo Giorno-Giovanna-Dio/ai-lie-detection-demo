@@ -3,127 +3,219 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>AI 微表情測謊分析 Demo</title>
-  <meta name="description" content="法庭科學課程專題：以 AI 分析臉部微表情，即時推算偏離基準線的「說謊可能性指標」。" />
+  <title>臉，會說謊嗎？ — AI 微表情測謊分析</title>
+  <meta name="description" content="法庭科學課程專題：從傳統測謊儀到 AI 臉部微表情分析。即時推算偏離基準線的「說謊可能性指標」，並誠實面對它的科學限制。" />
+  <meta property="og:title" content="臉，會說謊嗎？ — AI 微表情測謊分析" />
+  <meta property="og:description" content="從測謊儀到像素：一個法庭科學 AI 實驗。" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header class="top">
-    <div>
-      <p class="eyebrow">Forensic Science · Course Project</p>
-      <h1>AI 微表情測謊分析 <span>Demo</span></h1>
-      <p class="sub">傳統測謊儀測量的是「生理喚起」；這個 Demo 用 AI 從臉部影像擷取類似的訊號：眉毛、眼神、眨眼、嘴唇、頭部、情緒，以及用鏡頭估計的心率。</p>
+  <nav class="nav">
+    <a class="brand" href="#top"><span class="brand-dot"></span>LIE/LAB</a>
+    <div class="nav-links">
+      <a href="#film">示範影片</a>
+      <a href="#lab">實驗室</a>
+      <a href="#method">原理</a>
+      <a href="#science">科學限制</a>
+      <a href="https://github.com/Giorno-Giovanna-Dio/ai-lie-detection-demo" target="_blank" rel="noopener">GitHub ↗</a>
     </div>
-    <div id="status" class="status loading"><span class="dot"></span><span id="statusText">載入 AI 模型中…</span></div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero" id="top">
+    <canvas id="field" aria-hidden="true"></canvas>
+    <div class="hero-inner">
+      <p class="kicker reveal">Forensic Science · Course Project · 2026</p>
+      <h1 class="hero-title reveal">臉，<br />會說謊嗎？</h1>
+      <p class="hero-en reveal">Can a face lie? An AI micro-expression experiment, from the polygraph to pixels.</p>
+      <div class="hero-cta reveal">
+        <a class="btn primary" href="#film">▶ 看示範影片</a>
+        <a class="btn ghost" href="#lab">親自試用 AI →</a>
+      </div>
+    </div>
+    <div class="hero-meta">
+      <div><span>01</span>傳統測謊儀量的是生理喚起</div>
+      <div><span>02</span>AI 從臉部影像擷取同類訊號</div>
+      <div><span>03</span>但「緊張」不等於「說謊」</div>
+    </div>
+    <div class="scroll-cue" aria-hidden="true">SCROLL</div>
   </header>
 
-  <main class="grid">
-    <section class="stage-wrap">
-      <div class="stage">
-        <canvas id="stage" width="1280" height="720"></canvas>
-        <div id="placeholder" class="placeholder">
-          <div class="ph-inner">
-            <div class="ph-icon" aria-hidden="true">◎</div>
-            <p class="ph-title">選擇分析來源</p>
-            <p class="ph-desc">開啟鏡頭做現場示範，或上傳一段訪談／審訊影片。<br />前 <b>10 秒</b>會建立受測者的「基準線」，請自然地回答中性問題。</p>
-            <div class="ph-actions">
-              <button class="btn primary" data-action="cam" disabled>開啟鏡頭</button>
-              <label class="btn ghost file-btn" aria-disabled="true">上傳影片<input type="file" accept="video/*" data-action="file" disabled /></label>
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track">
+      <span>眉毛上揚</span><i>✳</i><span>眼神飄移</span><i>✳</i><span>眨眼頻率</span><i>✳</i><span>抿嘴</span><i>✳</i><span>頭部晃動</span><i>✳</i><span>驚訝 / 恐懼</span><i>✳</i><span>情緒突變</span><i>✳</i><span>心率 rPPG</span><i>✳</i>
+      <span>眉毛上揚</span><i>✳</i><span>眼神飄移</span><i>✳</i><span>眨眼頻率</span><i>✳</i><span>抿嘴</span><i>✳</i><span>頭部晃動</span><i>✳</i><span>驚訝 / 恐懼</span><i>✳</i><span>情緒突變</span><i>✳</i><span>心率 rPPG</span><i>✳</i>
+    </div>
+  </div>
+
+  <!-- FILM -->
+  <section class="section" id="film">
+    <div class="section-head reveal">
+      <span class="num">01</span>
+      <h2>示範影片</h2>
+      <p>同一套 AI，分析兩段公有領域影片：一段是已知的不實陳述，一段是對照組。</p>
+    </div>
+    <div class="film reveal">
+      <div class="film-tabs" role="tablist">
+        <button class="film-tab active" role="tab" data-src="media/demo-clinton.mp4" data-cap="案例：柯林頓 1998 年 1 月 26 日否認聲明（同年 8 月承認不實）。一般談話平均 28%，否認段落平均 56%，但兩段的峰值都約 93%。">案例 · 已知不實陳述</button>
+        <button class="film-tab" role="tab" data-src="media/demo-control.mp4" data-cap="對照組（無聲）：NASA 科學家講解夜空，沒有說謊動機。平均 26%，峰值卻高達 95%：這就是偽陽性。">對照組 · 科學家訪談</button>
+      </div>
+      <div class="film-frame">
+        <video id="film" src="media/demo-clinton.mp4" poster="media/poster-clinton.jpg" controls playsinline preload="metadata"></video>
+      </div>
+      <p class="film-cap" id="filmCap">案例：柯林頓 1998 年 1 月 26 日否認聲明（同年 8 月承認不實）。一般談話平均 28%，否認段落平均 56%，但兩段的峰值都約 93%。</p>
+    </div>
+  </section>
+
+  <!-- LAB -->
+  <section class="section" id="lab">
+    <div class="section-head reveal">
+      <span class="num">02</span>
+      <h2>實驗室</h2>
+      <p>上傳影片或開啟鏡頭，AI 會在你的瀏覽器裡即時分析。影像不會上傳。</p>
+      <div id="status" class="status loading"><span class="dot"></span><span id="statusText">載入 AI 模型中…</span></div>
+    </div>
+    <div class="grid reveal">
+      <div class="stage-wrap">
+        <div class="stage">
+          <canvas id="stage" width="1280" height="720"></canvas>
+          <div id="placeholder" class="placeholder">
+            <div class="ph-inner">
+              <p class="ph-title">選擇分析來源</p>
+              <p class="ph-desc">前 <b>10 秒</b>會建立受測者的「基準線」，請自然地回答中性問題。</p>
+              <div class="ph-actions">
+                <label class="btn primary file-btn" aria-disabled="true">上傳影片<input type="file" accept="video/*" data-action="file" disabled /></label>
+                <button class="btn ghost" data-action="cam" disabled>開啟鏡頭</button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="controls">
-        <button class="btn" data-action="cam" disabled>📷 鏡頭</button>
-        <label class="btn file-btn" aria-disabled="true">🎞️ 上傳影片<input type="file" accept="video/*" data-action="file" disabled /></label>
-        <button class="btn" id="playBtn" data-action="play" disabled>❚❚ 暫停</button>
-        <button class="btn" id="recalBtn" data-action="recal" disabled>↺ 重新校準</button>
-        <button class="btn rec" id="recBtn" data-action="rec" disabled>● 錄製示範影片</button>
-      </div>
-      <p class="hint">提示：錄製會把畫面（含分析疊圖）存成影片檔，可直接放進簡報。鏡頭模式會一併錄下麥克風聲音。</p>
-    </section>
-
-    <aside class="panel">
-      <div class="card score-card">
-        <div class="card-head"><span>說謊可能性指標</span><span id="phase" class="pill">待機</span></div>
-        <div class="score"><span id="scoreNum">--</span><span class="pct">%</span></div>
-        <div class="score-bar"><div id="scoreFill"></div></div>
-        <p class="fine">= 相對於受測者自身基準線的偏離程度，<b>不是</b>真正的說謊機率。</p>
-      </div>
-
-      <div class="card">
-        <div class="card-head"><span>行為線索 Cues</span><span class="muted">z-score vs 基準線</span></div>
-        <ul id="cues" class="cues"></ul>
-      </div>
-
-      <div class="card two">
-        <div>
-          <div class="card-head"><span>情緒辨識</span><span class="muted">DeepFace 等價</span></div>
-          <ul id="emos" class="emos"></ul>
-        </div>
-        <div class="hr-box">
-          <div class="card-head"><span>心率 rPPG</span></div>
-          <div class="hr"><span id="hrNum">--</span><small>bpm</small></div>
-          <p class="fine" id="hrNote">由額頭膚色微小變化估計（實驗性）</p>
+        <div class="controls">
+          <label class="btn small file-btn" aria-disabled="true">上傳影片<input type="file" accept="video/*" data-action="file" disabled /></label>
+          <button class="btn small" data-action="cam" disabled>鏡頭</button>
+          <button class="btn small" id="playBtn" data-action="play" disabled>❚❚ 暫停</button>
+          <button class="btn small" id="recalBtn" data-action="recal" disabled>↺ 重新校準</button>
+          <button class="btn small rec" id="recBtn" data-action="rec" disabled>● 錄製影片</button>
         </div>
       </div>
 
-      <div class="card">
-        <div class="card-head"><span>事件紀錄</span><span class="muted">偵測到的異常時刻</span></div>
-        <ol id="events" class="events"><li class="empty">尚無事件</li></ol>
+      <aside class="panel">
+        <div class="card score-card">
+          <div class="card-head"><span>說謊可能性指標</span><span id="phase" class="pill">待機</span></div>
+          <div class="score"><span id="scoreNum">--</span><span class="pct">%</span></div>
+          <div class="score-bar"><div id="scoreFill"></div></div>
+          <p class="fine">偏離受測者自身基準線的程度，<b>不是</b>真正的說謊機率。</p>
+        </div>
+        <div class="card">
+          <div class="card-head"><span>行為線索</span><span class="muted">z vs 基準線</span></div>
+          <ul id="cues" class="cues"></ul>
+        </div>
+        <div class="card two">
+          <div>
+            <div class="card-head"><span>情緒</span><span class="muted">7 類</span></div>
+            <ul id="emos" class="emos"></ul>
+          </div>
+          <div class="hr-box">
+            <div class="card-head"><span>心率</span></div>
+            <div class="hr"><span id="hrNum">--</span><small>bpm</small></div>
+            <p class="fine" id="hrNote">rPPG（實驗性）</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><span>事件紀錄</span></div>
+          <ol id="events" class="events"><li class="empty">尚無事件</li></ol>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- POLYGRAPH VS AI -->
+  <section class="section" id="method">
+    <div class="section-head reveal">
+      <span class="num">03</span>
+      <h2>從測謊儀到像素</h2>
+      <p>AI 並沒有發明新的測謊原理，只是換了感測器。</p>
+    </div>
+    <div class="versus reveal">
+      <div class="vs-col">
+        <p class="vs-label">傳統測謊儀 · Polygraph</p>
+        <ul>
+          <li><b>感測器</b>血壓袖帶、膚電電極、呼吸帶（需接觸）</li>
+          <li><b>量測</b>心率、血壓、汗腺活動、呼吸</li>
+          <li><b>基準</b>控制問題法（CQT）</li>
+          <li><b>本質</b>自律神經的「喚起」反應</li>
+        </ul>
       </div>
-    </aside>
-  </main>
-
-  <section class="how">
-    <h2>運作原理</h2>
-    <div class="pipeline">
-      <div class="step"><b>1 · 影像擷取</b><span>逐格讀取影片／鏡頭</span><code>OpenCV VideoCapture</code></div>
-      <div class="arrow">→</div>
-      <div class="step"><b>2 · 臉部特徵點</b><span>478 個 3D 特徵點 + 52 個表情係數（對應 FACS 動作單元）</span><code>MediaPipe Face Landmarker</code></div>
-      <div class="arrow">→</div>
-      <div class="step"><b>3 · 情緒分類</b><span>7 種基本情緒機率</span><code>DeepFace.analyze(emotion)</code></div>
-      <div class="arrow">→</div>
-      <div class="step"><b>4 · 建立基準線</b><span>前 10 秒＝測謊儀的「控制問題」</span><code>mean / std</code></div>
-      <div class="arrow">→</div>
-      <div class="step"><b>5 · 計算指標</b><span>各線索偏離程度加權 → 0–100%</span><code>Σ wᵢ·zᵢ → sigmoid</code></div>
+      <div class="vs-mid">VS</div>
+      <div class="vs-col accent">
+        <p class="vs-label">AI 微表情分析 · This demo</p>
+        <ul>
+          <li><b>感測器</b>一般鏡頭（非接觸）</li>
+          <li><b>量測</b>臉部肌肉、眼動、情緒、rPPG 心率</li>
+          <li><b>基準</b>前 10 秒個人基準線</li>
+          <li><b>本質</b>同上：偏離基準的「喚起」程度</li>
+        </ul>
+      </div>
     </div>
 
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>線索</th><th>怎麼量</th><th>對應的生理／心理機制</th></tr></thead>
-        <tbody>
-          <tr><td>眉毛上揚</td><td>browInnerUp / browOuterUp（AU1、AU2）</td><td>驚訝、恐懼時額肌收縮；Ekman 所稱的「洩漏」線索</td></tr>
-          <tr><td>眼神飄移</td><td>虹膜位置偏離基準方向</td><td>認知負荷增加、迴避視線（研究結果不一致）</td></tr>
-          <tr><td>眨眼頻率</td><td>眼睛開合比，計算每分鐘眨眼數</td><td>交感神經喚起、認知負荷改變眨眼行為</td></tr>
-          <tr><td>抿嘴</td><td>mouthPress / mouthRoll（AU24、AU28）</td><td>壓抑情緒、控制表情</td></tr>
-          <tr><td>頭部晃動</td><td>3D 頭部姿態角速度</td><td>緊張、坐立不安</td></tr>
-          <tr><td>驚訝／恐懼</td><td>情緒模型 fear + surprise 機率</td><td>被拆穿的恐懼（Ekman「detection apprehension」）</td></tr>
-          <tr><td>情緒突變</td><td>相鄰兩次情緒分布的差異</td><td>微表情：0.04–0.2 秒的短暫真實情緒</td></tr>
-          <tr><td>心率上升</td><td>rPPG：額頭綠光吸收隨脈搏變化</td><td>與測謊儀相同的自律神經反應，只是改用鏡頭量測</td></tr>
-        </tbody>
-      </table>
+    <div class="pipeline reveal">
+      <div class="step"><span class="step-n">①</span><b>影像擷取</b><p>逐格讀取影片</p><code>OpenCV</code></div>
+      <div class="step"><span class="step-n">②</span><b>臉部特徵點</b><p>478 點 + 52 表情係數 ≈ FACS 動作單元</p><code>MediaPipe</code></div>
+      <div class="step"><span class="step-n">③</span><b>情緒分類</b><p>7 種基本情緒機率</p><code>DeepFace</code></div>
+      <div class="step"><span class="step-n">④</span><b>個人基準線</b><p>前 10 秒的平均與標準差</p><code>mean · std</code></div>
+      <div class="step"><span class="step-n">⑤</span><b>綜合指標</b><p>各線索偏離值加權 → 0–100%</p><code>Σ wᵢ·zᵢ → σ</code></div>
     </div>
 
-    <div class="caveat">
-      <h3>⚠️ 科學限制（報告中務必說明）</h3>
+    <div class="cue-grid">
+      <div class="cue reveal"><span>AU1 · AU2</span><h3>眉毛上揚</h3><p>驚訝、恐懼時額肌收縮，Ekman 所稱的「洩漏」線索。</p></div>
+      <div class="cue reveal"><span>Iris</span><h3>眼神飄移</h3><p>認知負荷增加或迴避視線（研究結果並不一致）。</p></div>
+      <div class="cue reveal"><span>EAR</span><h3>眨眼頻率</h3><p>偽裝情緒時眨眼率上升（Porter &amp; ten Brinke, 2008）。</p></div>
+      <div class="cue reveal"><span>AU24 · AU28</span><h3>抿嘴</h3><p>壓抑情緒、控制表情。</p></div>
+      <div class="cue reveal"><span>Pose</span><h3>頭部晃動</h3><p>3D 頭部姿態的角速度，反映緊張與不安。</p></div>
+      <div class="cue reveal"><span>Emotion</span><h3>驚訝／恐懼</h3><p>「害怕被拆穿」的情緒（detection apprehension）。</p></div>
+      <div class="cue reveal"><span>Δ Emotion</span><h3>情緒突變</h3><p>微表情：持續 1/25–1/5 秒的短暫真實情緒。</p></div>
+      <div class="cue reveal"><span>rPPG</span><h3>心率</h3><p>額頭膚色隨脈搏的微小變化，與測謊儀量測同一種自律神經反應。</p></div>
+    </div>
+  </section>
+
+  <!-- SCIENCE -->
+  <section class="section" id="science">
+    <div class="section-head reveal">
+      <span class="num">04</span>
+      <h2>那麼，它準嗎？</h2>
+      <p>誠實的答案：並不準。以下是研究數據。</p>
+    </div>
+    <div class="stats">
+      <div class="stat reveal"><b data-count="54">54</b><em>%</em><p>人類判斷說謊的平均準確率，只比擲硬幣好一點。</p><cite>Bond &amp; DePaulo, 2006 · 206 篇研究、24,483 位判斷者</cite></div>
+      <div class="stat reveal"><b data-count="2">2</b><em>%</em><p>真正屬於「微表情」的表情比例。而且說謊與誠實時都會出現。</p><cite>Porter &amp; ten Brinke, 2008 · 697 個表情</cite></div>
+      <div class="stat reveal"><b data-count="0">0</b><em>↑</em><p>微表情訓練（METT）對測謊準確率的提升：與假訓練、無訓練沒有差異。</p><cite>Jordan et al., 2019</cite></div>
+      <div class="stat reveal"><b data-count="76">76</b><em>%</em><p>歐盟 iBorderCtrl AI 測謊試辦宣稱的準確率，樣本僅約 32 人，遭專家批評「缺乏科學證據」。</p><cite>The Intercept, 2019</cite></div>
+    </div>
+    <div class="caveat reveal">
+      <h3>這個 Demo 的正確解讀</h3>
       <ul>
-        <li>沒有任何單一表情是「說謊的訊號」。這些線索反映的是<b>緊張、認知負荷或情緒喚起</b>，誠實但緊張的人也會出現（與測謊儀的偽陽性問題相同）。</li>
-        <li>人類判斷說謊的平均準確率約 54%（Bond &amp; DePaulo, 2006）；微表情在說謊與誠實情境中都很少見（Porter &amp; ten Brinke, 2008）。</li>
-        <li>情緒模型多以「擺拍」表情訓練，對真實微表情的辨識能力有限；光線、角度、膚色都會影響結果。</li>
-        <li>本工具僅供課堂教學示範，不可用於真實的偵查、審判或任何對個人的判斷。</li>
+        <li>指標衡量的是<b>偏離個人基準線的程度</b>，反映緊張、認知負荷或情緒喚起；誠實但緊張的人一樣會升高。這和測謊儀的偽陽性問題相同（National Research Council, 2003）。</li>
+        <li>權重是依文獻方向設定的示範值，<b>未經資料集驗證</b>；光線、角度、影片畫質都會影響結果。</li>
+        <li>在台灣，測謊鑑定須符合受測者同意、專業鑑定人、可靠方法等要件才可能具證據能力，且<b>不得作為有罪判決的唯一證據</b>（最高法院 92 年度台上字第 2282 號判決意旨）。</li>
+        <li>本工具僅供課堂教學，不得用於偵查、審判、聘僱或任何對個人的判斷。</li>
       </ul>
     </div>
   </section>
 
   <footer class="foot">
-    <span>Face Landmarker © Google MediaPipe · Expression model: face-api (vladmandic) · 所有運算都在你的瀏覽器內進行，影像不會上傳。</span>
+    <p class="foot-big">緊張 ≠ 說謊。</p>
+    <div class="foot-row">
+      <span>法庭科學課程專題 · 2026</span>
+      <span>MediaPipe Face Landmarker · face-api · 影片來源：Wikimedia Commons（Public Domain）</span>
+      <a href="https://github.com/Giorno-Giovanna-Dio/ai-lie-detection-demo" target="_blank" rel="noopener">原始碼 ↗</a>
+    </div>
   </footer>
 
   <video id="src" playsinline muted hidden></video>
+  <script type="module" src="site.js"></script>
   <script type="module" src="app.js"></script>
 </body>
 </html>
