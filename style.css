@@ -62,7 +62,7 @@ a { color: inherit; }
 .marquee { border-block: 1px solid var(--line); overflow: hidden; padding: 22px 0; background: var(--bg); }
 .marquee-track { display: flex; gap: 40px; width: max-content; animation: marquee 38s linear infinite; font: 700 clamp(28px, 4vw, 52px) var(--sans); white-space: nowrap; }
 .marquee-track i { color: var(--lime); font-style: normal; }
-.marquee-track span:nth-of-type(4n+2) { color: transparent; -webkit-text-stroke: 1px var(--ink); }
+.marquee-track span:nth-of-type(even) { color: #3d3f44; }
 @keyframes marquee { to { transform: translateX(-50%); } }
 
 /* sections */
@@ -179,6 +179,75 @@ a { color: inherit; }
 .foot { padding: clamp(100px, 14vw, 200px) var(--pad) 36px; margin-top: 80px; border-top: 1px solid var(--line); }
 .foot-big { font: 900 clamp(64px, 14vw, 240px)/0.9 var(--sans); letter-spacing: -0.05em; }
 .foot-row { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; margin-top: 60px; font-size: 13px; color: var(--muted); }
+
+/* phones */
+@media (max-width: 640px) {
+  :root { --pad: 20px; }
+  .nav { mix-blend-mode: normal; background: rgba(7,7,8,.82); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 14px var(--pad); border-bottom: 1px solid var(--line); }
+  .brand { font-size: 13px; }
+  .nav-links { font-size: 13px; }
+
+  .hero { min-height: 92svh; padding: 104px var(--pad) 48px; }
+  .kicker { font-size: 11px; letter-spacing: .1em; margin-bottom: 20px; }
+  .hero-title { font-size: 17vw; line-height: 1; }
+  .hero-en { font-size: 16px; margin-top: 22px; }
+  .hero-cta { margin-top: 28px; gap: 10px; }
+  .hero-cta .btn { flex: 1; justify-content: center; padding: 13px 12px; font-size: 14px; }
+  .scroll-cue { display: none; }
+
+  .marquee { padding: 14px 0; }
+  .marquee-track { font-size: 26px; gap: 22px; }
+
+  .section { padding-top: 72px; }
+  .section-head { margin-bottom: 28px; }
+  .section-head h2 { font-size: 44px; }
+  .section-head p { font-size: 15px; margin-top: 10px; }
+  .section-head .status { margin-top: 14px; font-size: 12px; }
+
+  .film-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .film-tab { font-size: 13px; padding: 10px 8px; text-align: center; }
+  .film-frame { border-radius: 12px; }
+  .film-cap { font-size: 14px; }
+
+  .stage { aspect-ratio: 3 / 4; border-radius: 14px; }
+  .ph-title { font-size: 24px; }
+  .ph-desc { font-size: 14px; }
+  .ph-actions { flex-direction: column; align-items: stretch; gap: 8px; }
+  .ph-actions .btn { justify-content: center; }
+  .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .controls .btn { justify-content: center; padding: 10px 4px; font-size: 12px; }
+  .controls .rec { grid-column: span 2; }
+  .score { font-size: 60px; }
+
+  .versus { gap: 14px; }
+  .vs-col { padding: 22px 20px; border-radius: 16px; }
+  .vs-col li { grid-template-columns: 52px 1fr; font-size: 15px; padding: 11px 0; }
+  .vs-mid { font-size: 20px; }
+
+  .pipeline { grid-template-columns: 1fr; margin-top: 32px; border-radius: 16px; }
+  .step { display: grid; grid-template-columns: 40px 1fr; column-gap: 12px; row-gap: 2px; padding: 16px 18px; border-right: 0; border-bottom: 1px solid var(--line); }
+  .step:last-child { border-bottom: 0; }
+  .step-n { grid-row: span 3; font-size: 26px; line-height: 1; }
+  .step b { font-size: 16px; }
+  .step code { margin-top: 0; padding-top: 2px; }
+
+  .cue-grid { grid-template-columns: 1fr; gap: 8px; margin-top: 32px; }
+  .cue { min-height: 0; padding: 16px 18px; gap: 6px; border-radius: 14px; }
+  .cue h3 { font-size: 19px; }
+
+  .stats { grid-template-columns: 1fr; }
+  .stat { display: grid; grid-template-columns: auto auto 1fr; column-gap: 6px; align-items: start; padding: 22px 0; margin-right: 0; border-right: 0; border-bottom: 1px solid var(--line); }
+  .stat b { font-size: 60px; grid-row: span 2; }
+  .stat em { font-size: 26px; grid-row: span 2; margin: 4px 14px 0 0; }
+  .stat p { grid-column: 3; grid-row: 1; margin-top: 0; font-size: 14px; }
+  .stat cite { grid-column: 3; grid-row: 2; margin-top: 8px; font-size: 11px; }
+  .caveat { margin-top: 32px; padding: 20px; border-radius: 16px; }
+  .caveat h3 { font-size: 18px; }
+  .caveat ul { font-size: 14px; line-height: 1.75; padding-left: 18px; }
+
+  .foot { padding-top: 80px; margin-top: 56px; }
+  .foot-row { flex-direction: column; gap: 8px; margin-top: 36px; }
+}
 
 /* reveal */
 .reveal { opacity: 0; transform: translateY(36px); transition: opacity 1s var(--ease), transform 1s var(--ease); }

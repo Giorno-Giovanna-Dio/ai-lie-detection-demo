@@ -73,7 +73,7 @@ const cio = new IntersectionObserver((entries) => {
 document.querySelectorAll("[data-count]").forEach((el) => cio.observe(el));
 
 // --- film tabs ---
-const film = document.getElementById("film");
+const film = document.getElementById("filmVideo");
 document.querySelectorAll(".film-tab").forEach((tab) =>
   tab.addEventListener("click", () => {
     document.querySelectorAll(".film-tab").forEach((t) => t.classList.toggle("active", t === tab));
